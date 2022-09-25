@@ -40,5 +40,24 @@ namespace Digimon1
                 dataSize[i] = br.ReadInt32();
             }
         }
+
+        //Binary Writer
+        public void write(BinaryWriter bw)
+        {
+            bw.Write(magic);
+            bw.Write(version);
+            bw.Write(fileSize);
+            bw.Write(padding);
+            bw.Write(fileCount);
+            bw.Write(typeCount);
+            bw.Write(headerSize);
+            bw.Write(payloadStart);
+            for (int i = 0; i < fileCount; i++)
+            {
+                bw.Write(dataOffset[i]);
+                bw.Write(dataSize[i]);
+            }
+        }
     }
 }
+

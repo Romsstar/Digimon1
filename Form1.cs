@@ -25,8 +25,8 @@ namespace Digimon1
 {
     public partial class Form1 : Form
     {
-        List<Digimon1Entry> Digimon1List = new List<Digimon1Entry>();
-        IDictionary<short, short> Digimon1Dict = new Dictionary<short, short>();
+        IDictionary<short, Digimon1Entry> Digimon1Dict = new Dictionary<short, Digimon1Entry>();
+        KCAP header;
         public Form1()
         {
             InitializeComponent();
@@ -45,110 +45,124 @@ namespace Digimon1
 
                 BinaryReader br = new BinaryReader(File.OpenRead(ofd.FileName));
 
-                KCAP header = new KCAP(br);
+                header = new KCAP(br);
                 Digimon1Entry[] Digimon1Data = new Digimon1Entry[header.fileCount];
 
                 for (int i = 0; i < header.fileCount; i++)
                 {
-
-                    Digimon1List.Add(new Digimon1Entry(br));
-
-                }
-                foreach (var emp in Digimon1List)
-                {
-                    Digimon1Dict.Add(emp.id, emp.evoListPos);
+                    Digimon1Entry entry = new Digimon1Entry(br);
+                    Digimon1Dict.Add(entry.id, entry);
                 }
             }
         }
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
 
-            foreach (var emp in Digimon1List)
+            foreach (var emp in Digimon1Dict)
             {
-                if (emp.level == (Level)1)
+                if (emp.Value.level == (Level)1)
                 {
-                    dataGridView1.Rows.Add(emp.id, emp.digimonName.ToString(), emp.evoListPos);
+                    dataGridView1.Rows.Add(emp.Key, emp.Value.digimonName.ToString(), emp.Value.evoListPos);
                 }
-
             }
-
-
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            foreach (var emp in Digimon1List)
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
+            foreach (var emp in Digimon1Dict)
             {
-                if (emp.level == (Level)2 && (int)emp.evoListPos != 999)
+                if (emp.Value.level == (Level)2)
                 {
-                    dataGridView1.Rows.Add(emp.id, emp.digimonName.ToString());
-
+                    dataGridView1.Rows.Add(emp.Key, emp.Value.digimonName.ToString(), emp.Value.evoListPos);
                 }
-
             }
-
-
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-
             dataGridView1.Sort(this.dataGridView1.Columns["Name"], ListSortDirection.Ascending);
             for (int i = 0; i < dataGridView1.Rows.Count - 1; i++)
             {
                 dataGridView1.Rows[i].Cells[2].Value = i + 1;
-
-
-                bool keyExists = Digimon1Dict.ContainsKey((short)dataGridView1.Rows[i].Cells[0].Value);
-
-                if (keyExists)
-                {
-                    var key = (short)dataGridView1.Rows[i].Cells[0].Value;
-                    var val = (short)dataGridView1.Rows[i].Cells[1].Value;
-                    Digimon1Dict[key] = val;
-                    File.WriteAllText("data.json", JsonConvert.SerializeObject(Digimon1Dict, Formatting.Indented, new Newtonsoft.Json.Converters.StringEnumConverter()));
-             
-                }
+                short key = (short)dataGridView1.Rows[i].Cells[0].Value;
+                var val = (int)dataGridView1.Rows[i].Cells[2].Value;
+                Digimon1Dict[key].evoListPos = (short)val;
             }
         }
+
         private void saveToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-
             using (BinaryWriter bw = new BinaryWriter(File.Open("Digimon1.bin", FileMode.OpenOrCreate)))
             {
 
+                header.write(bw);
 
-                //{
-
-                //    emp.write(bw);
-
-                //}
-
-                foreach (var emp in Digimon1List)
+                foreach (var pair in Digimon1Dict)
                 {
-                    foreach (DataGridViewRow i in dataGridView1.Rows)
-                    {
-                        if (i.Cells[1].Value != null)
-                        {
-                            emp.evoListPos = (short)i.Cells[1].Value;
+                    pair.Value.write(bw);
 
-                        }
-                        File.WriteAllText("data.json", JsonConvert.SerializeObject(Digimon1List, Formatting.Indented, new Newtonsoft.Json.Converters.StringEnumConverter()));
-                    }
                 }
-
             }
         }
 
-        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+       
+
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
         {
-            foreach (var emp in Digimon1List)
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
+            foreach (var emp in Digimon1Dict)
             {
-                dataGridView1.Rows.Add(emp.id.ToString(), emp.evoListPos);
+                if (emp.Value.level == (Level)3)
+                {
+                    dataGridView1.Rows.Add(emp.Key, emp.Value.digimonName.ToString(), emp.Value.evoListPos);
+                }
+            }
+        }
+
+        private void radioButton5_CheckedChanged(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
+            foreach (var emp in Digimon1Dict)
+            {
+                if (emp.Value.level == (Level)4)
+                {
+                    dataGridView1.Rows.Add(emp.Key, emp.Value.digimonName.ToString(), emp.Value.evoListPos);
+                }
+            }
+        }
+
+        private void radioButton6_CheckedChanged(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
+            foreach (var emp in Digimon1Dict)
+            {
+                if (emp.Value.level == (Level)5)
+                {
+                    dataGridView1.Rows.Add(emp.Key, emp.Value.digimonName.ToString(), emp.Value.evoListPos);
+                }
+            }
+        }
+
+        private void radioButton7_CheckedChanged(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
+            foreach (var emp in Digimon1Dict)
+            {
+                if (emp.Value.level == (Level)6)
+                {
+                    dataGridView1.Rows.Add(emp.Key, emp.Value.digimonName.ToString(), emp.Value.evoListPos);
+                }
             }
         }
     }
 }
-//    myClass.Add(i.Cells[0].Value.ToString());
-//      myClass.Add(i.Cells[1].Value.ToString());
+
 
